@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+    color: white;
+    background:
+        radial-gradient(circle at 50% 0%, #5d1b70 0%, #25052d 40%, #08000d 100%);
+}
+
+/* MOVING STARS */
+
+#stars {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from {
+        opacity: 0.15;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+
+/* SHOOTING STARS */
+
+.shooting-star {
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, white);
+    transform: rotate(-35deg);
+    opacity: 0;
+    animation: shooting 6s linear infinite;
+}
+
+@keyframes shooting {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(-35deg);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 0;
+        transform: translate(-300px, 220px) rotate(-35deg);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* SCREENS */
+
+.screen {
+    min-height: 100vh;
+    width: 100%;
+    padding: 40px 20px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    text-align: center;
+
+    position: relative;
+    z-index: 2;
+}
+
+.screen.active {
+    display: flex;
+    animation: appear 0.8s ease;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* TEXT */
+
+h1 {
+    font-size: clamp(34px, 9vw, 58px);
+    margin: 15px 0;
+}
+
+h2 {
+    font-size: clamp(25px, 7vw, 38px);
+}
+
+p {
+    max-width: 700px;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+/* HEART */
+
+.big-heart {
+    font-size: 75px;
+    animation: heartbeat 1.3s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+/* MESSAGE CARD */
+
+.card {
+    width: min(700px, 95%);
+
+    padding: 30px 24px;
+
+    background: rgba(255,255,255,0.08);
+
+    border: 1px solid rgba(255,255,255,0.2);
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 0 40px rgba(255,80,200,0.15);
+
+    backdrop-filter: blur(12px);
+}
+
+/* BUTTON */
+
+button {
+    border: none;
+
+    border-radius: 999px;
+
+    padding: 15px 28px;
+
+    margin-top: 25px;
+
+    background: white;
+
+    color: #5c1265;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.35);
+
+    transition: 0.2s;
+}
+
+button:active {
+    transform: scale(0.94);
+}
+
+/* MUSIC BUTTON */
+
+#musicButton {
+    display: none;
+
+    position: fixed;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 10;
+
+    margin: 0;
+
+    padding: 10px 16px;
+
+    font-size: 14px;
+}
+
+/* FLOATING EMOJIS */
+
+.floating {
+    position: fixed;
+
+    bottom: -50px;
+
+    pointer-events: none;
+
+    z-index: 3;
+
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateY(0)
+            rotate(0deg);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translateY(-110vh)
+            rotate(360deg);
+    }
+}
+
+/* FINAL SURPRISE */
+
+#secret {
+    display: none;
+
+    animation: reveal 1s ease;
+}
+
+@keyframes reveal {
+
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .screen {
+        padding: 50px 18px;
+    }
+
+    .card {
+        padding: 24px 18px;
+    }
+
+    p {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    button {
+        font-size: 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- STAR BACKGROUND -->
+
+<div id="stars"></div>
+
+
+<!-- YOUR SONG -->
+
+<audio id="music" loop preload="auto">
+
+    <source
+        src="those_eyes_best_part.mp3"
+        type="audio/mpeg">
+
+</audio>
+
+
+<!-- MUSIC BUTTON -->
+
+<button id="musicButton" onclick="toggleMusic()">
+    🎵 Music
+</button>
+
+
+<!-- SCREEN 1 -->
+
+<section class="screen active" id="screen1">
+
+    <div class="big-heart">
+        👀❤️
+    </div>
+
+    <h1>
+        Hey, look...
+    </h1>
+
+    <p>
+        I made something for you.
+    </p>
+
+    <button onclick="startExperience()">
+        Open it 🫶
+    </button>
+
+</section>
+
+
+<!-- SCREEN 2 -->
+
+<section class="screen" id="screen2">
+
+    <div class="big-heart">
+        🎂❤️
+    </div>
+
+    <h1>
+        Happy birthday to you ❤️🎂
+    </h1>
+
+    <p>
+        Happy birthdayyy to my favorite person 🥹💗
+    </p>
+
+    <button onclick="nextScreen(3)">
+        Keep going... 👀
+    </button>
+
+</section>
+
+
+<!-- SCREEN 3 -->
+
+<section class="screen" id="screen3">
+
+    <div class="card">
+
+        <div class="big-heart">
+            💌
+        </div>
+
+        <h2>
+            Happy birthdayyy my lovee ❤️😭
+        </h2>
+
+        <p>
+            i dont even know how to say all this properly but
+            im really really glad i have you in my life.
+            you mean so much to me and honestly even a simple
+            text from you can make my whole day better.
+        </p>
+
+        <p>
+            i love talking to you, annoying you, laughing with you
+            and all those random little moments we have 😭.
+        </p>
+
+        <p>
+            i hope you have the best birthday ever and get
+            everything you want because you deserve it.
+        </p>
+
+        <p>
+            i dont know what the future gonna be like but i just
+            hope we stay together and make alot more memories.
+        </p>
+
+        <p>
+            thank you for being you and for always making me smile.
+            im really glad i have you and i hope i can keep making
+            you smile too. ❤️
+        </p>
+
+        <p>
+            happy birthday my lovee ❤️
+            i love youu, enjoy your dayyy 🫶
+        </p>
+
+    </div>
+
+    <button onclick="nextScreen(4)">
+        One more thing... 💗
+    </button>
+
+</section>
+
+
+<!-- SCREEN 4 -->
+
+<section class="screen" id="screen4">
+
+    <div class="big-heart">
+        🥹💗✨
+    </div>
+
+    <h1>
+        One more thing...
+    </h1>
+
+    <div class="card">
+
+        <p>
+            i hope we get to make alot more random memories
+            together, laugh at stupid things, annoy each other,
+            and enjoy all those little moments that somehow
+            become the best ones. ❤️
+        </p>
+
+        <p>
+            i hope today is full of happiness, smiles,
+            good memories and everything that makes you happy. 🫶
+        </p>
+
+    </div>
+
+    <button onclick="nextScreen(5)">
+        Final surprise 🎁
+    </button>
+
+</section>
+
+
+<!-- SCREEN 5 -->
+
+<section class="screen" id="screen5">
+
+    <div class="big-heart">
+        🎁💖
+    </div>
+
+    <h1>
+        Okay okay... final one 😭
+    </h1>
+
+    <p>
+        You actually made it this far.
+    </p>
+
+    <button onclick="finalSurprise()">
+        Don't press this 👀
+    </button>
+
+    <div id="secret">
+
+        <h2>
+            YOU PRESSED IT 😭❤️
+        </h2>
+
+        <p>
+            I hope you have the best birthday ever.
+            Smile alot, enjoy your dayyy and make some
+            beautiful memories i love you. 🎂💗
+        </p>
+
+        <div class="big-heart">
+            ❤️🫶✨
+        </div>
+
+        <p>
+            made with love, just for you.
+        </p>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* MUSIC */
+
+const music =
+    document.getElementById("music");
+
+const musicButton =
+    document.getElementById("musicButton");
+
+
+function startExperience() {
+
+    music.play()
+        .then(function() {
+
+            musicButton.style.display =
+                "block";
+
+            musicButton.innerHTML =
+                "🔊 Music";
+
+        })
+        .catch(function() {
+
+            musicButton.style.display =
+                "block";
+
+            musicButton.innerHTML =
+                "🎵 Tap for music";
+
+        });
+
+    nextScreen(2);
+
+    createFloatingEmojis(15);
+}
+
+
+function toggleMusic() {
+
+    if (music.paused) {
+
+        music.play();
+
+        musicButton.innerHTML =
+            "🔊 Music";
+
+    } else {
+
+        music.pause();
+
+        musicButton.innerHTML =
+            "🔇 Music";
+    }
+}
+
+
+/* SCREEN CHANGES */
+
+function nextScreen(number) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(function(screen) {
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById("screen" + number)
+        .classList.add("active");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+    createFloatingEmojis(10);
+}
+
+
+/* FINAL SURPRISE */
+
+function finalSurprise() {
+
+    document
+        .getElementById("secret")
+        .style.display = "block";
+
+    createFloatingEmojis(50);
+}
+
+
+/* FLOATING EMOJIS */
+
+function createFloatingEmojis(amount) {
+
+    const emojis = [
+
+        "❤️",
+        "💗",
+        "💕",
+        "💖",
+        "💓",
+        "💞",
+        "🫶",
+        "✨",
+        "⭐",
+        "🌟",
+        "🌸",
+        "🎀",
+        "💫",
+        "🥹"
+
+    ];
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+
+        const emoji =
+            document.createElement("div");
+
+        emoji.className =
+            "floating";
+
+        emoji.innerHTML =
+            emojis[
+                Math.floor(
+                    Math.random()
+                    * emojis.length
+                )
+            ];
+
+        emoji.style.left =
+            Math.random() * 100 + "vw";
+
+        emoji.style.fontSize =
+            (15 + Math.random() * 25)
+            + "px";
+
+        emoji.style.animationDuration =
+            (3 + Math.random() * 5)
+            + "s";
+
+        document.body.appendChild(emoji);
+
+        setTimeout(function() {
+
+            emoji.remove();
+
+        }, 9000);
+    }
+}
+
+
+/* CREATE STARS */
+
+const starContainer =
+    document.getElementById("stars");
+
+for (
+    let i = 0;
+    i < 140;
+    i++
+) {
+
+    const star =
+        document.createElement("div");
+
+    star.className =
+        "star";
+
+    star.style.left =
+        Math.random() * 100 + "vw";
+
+    star.style.top =
+        Math.random() * 100 + "vh";
+
+    star.style.animationDuration =
+        (1.5 + Math.random() * 3)
+        + "s";
+
+    star.style.animationDelay =
+        Math.random() * 3 + "s";
+
+    starContainer.appendChild(star);
+}
+
+
+/* SHOOTING STARS */
+
+for (
+    let i = 0;
+    i < 4;
+    i++
+) {
+
+    const shooting =
+        document.createElement("div");
+
+    shooting.className =
+        "shooting-star";
+
+    shooting.style.left =
+        (50 + Math.random() * 50)
+        + "vw";
+
+    shooting.style.top =
+        Math.random() * 60
+        + "vh";
+
+    shooting.style.animationDelay =
+        Math.random() * 5
+        + "s";
+
+    starContainer.appendChild(shooting);
+}
+
+</script>
+
+</body>
+  </html>
